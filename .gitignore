@@ -1,0 +1,13 @@
+**/build/
+**/.cache/
+**/.vscode/
+**/compiled_comands.json
+**/sdkconfig*
+**/.DS_Store
+TODO
+
+*.zip
+
+wifi_credentials.h
+
+backup_*
