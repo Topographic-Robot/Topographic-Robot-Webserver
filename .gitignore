@@ -8,6 +8,6 @@ TODO
 
 *.zip
 
-wifi_credentials.h
+compile_commands.json
 
 backup_*
