@@ -5,7 +5,7 @@
 #include <mongoc/mongoc.h>
 #include <microhttpd.h>
 
-const uint16_t port = 8888;
+const uint16_t              port = 8888;
 static mongoc_collection_t *collection; /* Global collection for MongoDB */
 
 /* Helper function to insert parsed JSON data into MongoDB */
@@ -46,7 +46,7 @@ int main(void)
 
 void insert_sensor_data(const char *json_str) 
 {
-  bson_t *document;
+  bson_t      *document;
   bson_error_t error;
 
   /* Parse JSON string to BSON document */
