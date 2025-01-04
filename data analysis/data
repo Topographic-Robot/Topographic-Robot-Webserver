@@ -1,1 +1,23 @@
+import json
+import pandas as pd
 
+def load_files(file_path,key):
+    timestamps= []
+    sensordata=[]
+    with open(file_path, 'r') as f:
+        for line in f:
+            m=line.strip()
+           
+            if line:
+                k=m.split(" ",2)
+                timestamp1=k[1]
+                json_data=json.loads(k[2])
+                timestamps.append(timestamp1)
+                sensordata.append(json_data)
+        df=pd.DataFrame(sensordata)
+        df["timestamp"] = pd.to_datetime(timestamps) 
+        
+
+               
+
+load_files("c:\\Users\\roshan06\\Downloads\\DHT22.TXT",'temperature_c')
