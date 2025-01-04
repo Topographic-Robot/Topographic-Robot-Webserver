@@ -35,3 +35,20 @@ app.layout= html.Div([
     dcc.Graph(id='temp-graph'),
     dcc.Graph(id='gyro-graph'),
 ])
+
+#callback function for dynamical update
+@app.callback(
+        [
+            Output('temp-graph','figure'),
+            Output('gyro-graph','figure')
+
+        ],
+        [Input('update-interval', 'n_intervals')]
+    )
+def update_graphs(n):
+    temp_fig = px.line(temp_sensor, y="timestamp", x="temperature_c", title="Temperature Over Time")
+    gyro_fig = px.line(gyro_sensor, x="timestamp", y="gyro_x", title="Gyro X-Axis Over Time")
+    return temp_fig, gyro_fig
+# Run app
+if __name__ == '__main__':
+    app.run_server(debug=True)
