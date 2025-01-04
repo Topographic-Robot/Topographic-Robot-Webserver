@@ -1,6 +1,12 @@
-import json
+import dash.dash
+import dash
+from dash import dcc, html
+from dash.dependencies import Input,Output
 import pandas as pd
+import plotly.express as px
+import json
 
+# json files
 def load_files(file_path,key):
     timestamps= []
     sensordata=[]
@@ -16,8 +22,16 @@ def load_files(file_path,key):
                 sensordata.append(json_data)
         df=pd.DataFrame(sensordata)
         df["timestamp"] = pd.to_datetime(timestamps) 
-        
+    return df
+#loading the data
+temp_sensor= load_files("c:\\Users\\roshan06\\Downloads\\DHT22.TXT",'temperature_c')
+gyro_sensor= load_files("c:\\Users\\roshan06\\Downloads\\MPU6050 (1).TXT",'x')
 
-               
-
-load_files("c:\\Users\\roshan06\\Downloads\\DHT22.TXT",'temperature_c')
+#dash dashboard
+app= dash.Dash(__name__)
+app.layout= html.Div([
+    html.H1("analyzed data"),
+    dcc.Interval(id='update-interval',interval=5000,n_intervals=0),
+    dcc.Graph(id='temp-graph'),
+    dcc.Graph(id='gyro-graph'),
+])
