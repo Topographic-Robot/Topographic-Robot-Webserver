@@ -6,27 +6,6 @@ import pandas as pd
 import plotly.express as px
 import json
 
-# json files
-def load_files(file_path,key):
-    timestamps= []
-    sensordata=[]
-    with open(file_path, 'r') as f:
-        for line in f:
-            m=line.strip()
-           
-            if line:
-                k=m.split(" ",2)
-                timestamp1=k[1]
-                json_data=json.loads(k[2])
-                timestamps.append(timestamp1)
-                sensordata.append(json_data)
-        df=pd.DataFrame(sensordata)
-        df["timestamp"] = pd.to_datetime(timestamps) 
-    return df
-#loading the data
-temp_sensor= load_files("c:\\Users\\roshan06\\Downloads\\DHT22.TXT",'temperature_c')
-gyro_sensor= load_files("c:\\Users\\roshan06\\Downloads\\MPU6050 (1).TXT",'x')
-
 #dash dashboard
 app= dash.Dash(__name__)
 app.layout= html.Div([
@@ -35,6 +14,26 @@ app.layout= html.Div([
     dcc.Graph(id='temp-graph'),
     dcc.Graph(id='gyro-graph'),
 ])
+
+# websocket cliuent
+sensor_data = []  # List to store real-time data
+
+async def websocket_listener():
+    uri = "ws://localhost:8000/ws"
+    async with websockets.connect(uri) as websocket:
+        while True:
+            message = await websocket.recv()
+            data = json.loads(message)
+            sensor_data.append(data)  # Store received data
+
+# Listener
+def start_websocket_client():
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    loop.run_until_complete(websocket_listener())
+
+# Run WebSocket listener in background
+threading.Thread(target=start_websocket_client, daemon=True).start()
 
 #callback function for dynamical update
 @app.callback(
