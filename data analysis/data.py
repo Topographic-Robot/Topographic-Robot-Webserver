@@ -15,7 +15,7 @@ app.layout= html.Div([
     dcc.Graph(id='gyro-graph'),
 ])
 
-# websocket cliuent
+# WebSocket 
 sensor_data = []  # List to store real-time data
 
 async def websocket_listener():
@@ -26,7 +26,7 @@ async def websocket_listener():
             data = json.loads(message)
             sensor_data.append(data)  # Store received data
 
-# Listener
+#Listener 
 def start_websocket_client():
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
@@ -45,8 +45,15 @@ threading.Thread(target=start_websocket_client, daemon=True).start()
         [Input('update-interval', 'n_intervals')]
     )
 def update_graphs(n):
-    temp_fig = px.line(temp_sensor, y="timestamp", x="temperature_c", title="Temperature Over Time")
-    gyro_fig = px.line(gyro_sensor, x="timestamp", y="gyro_x", title="Gyro X-Axis Over Time")
+    if not sensor_data:
+        return px.line(title="Waiting for Data"), px.line(title="Waiting for Data")
+    df = pd.DataFrame(sensor_data)
+    df["timestamp"] = pd.to_datetime(df["timestamp"])
+    temp_df = df[df["sensor_type"] == "temperature_humidity"]
+    gyro_df = df[df["sensor_type"] == "gyro"]
+    temp_fig = px.line(temp_df, x="timestamp", y="temperature_c", title="Temperature Over Time")
+    gyro_fig = px.line(gyro_df, x="timestamp", y=["gyro_x", "gyro_y", "gyro_z"], title="Gyro Sensor Readings")
+
     return temp_fig, gyro_fig
 # Run app
 if __name__ == '__main__':
