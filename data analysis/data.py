@@ -1,3 +1,6 @@
+import threading
+import asyncio
+import websockets
 import dash.dash
 import dash
 from dash import dcc, html
@@ -22,7 +25,7 @@ async def websocket_listener():
     uri = "ws://localhost:8000/ws"
     async with websockets.connect(uri) as websocket:
         while True:
-            message = await websocket.recv()
+            message = await websockets.recv()
             data = json.loads(message)
             sensor_data.append(data)  # Store received data
 
